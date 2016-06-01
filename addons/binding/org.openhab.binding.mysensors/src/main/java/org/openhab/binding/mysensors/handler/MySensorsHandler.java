@@ -258,6 +258,8 @@ public class MySensorsHandler extends BaseThingHandler implements MySensorsUpdat
                             updateState(channel, new StringType(msg.getMsg()));
                         } else if (channel.equals(CHANNEL_HVAC_SPEED)) {
                             updateState(channel, new StringType(msg.getMsg()));
+                        } else if (channel.equals(CHANNEL_VAR5)) {
+                            updateState(channel, new StringType(msg.getMsg()));
                         } else {
                             updateState(channel, new DecimalType(msg.getMsg()));
                         }

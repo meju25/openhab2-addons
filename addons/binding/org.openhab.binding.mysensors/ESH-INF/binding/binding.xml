@@ -6,6 +6,6 @@
 
     <name>MySensors Binding</name>
     <description>This is the binding for MySensors.</description>
-    <author>Tim Oberföll</author>
+    <author>Tim Oberföll, JMe</author>
 
 </binding:binding>

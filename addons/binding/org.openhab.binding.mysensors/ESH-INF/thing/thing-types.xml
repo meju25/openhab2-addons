@@ -861,31 +861,31 @@
 	</channel-type>
 	<channel-type id="var1-channel">
 		<item-type>Number</item-type>
-		<label>Variable 1</label>
+		<label>Variable 1 (Number)</label>
 		<description>MySensors var1 Channel</description>
 		<category>Variable</category>
 	</channel-type>
 	<channel-type id="var2-channel">
 		<item-type>Number</item-type>
-		<label>Variable 2</label>
+		<label>Variable 2 (Number)</label>
 		<description>MySensors var2 Channel</description>
 		<category>Variable</category>
 	</channel-type>
 	<channel-type id="var3-channel">
 		<item-type>Number</item-type>
-		<label>Variable 3</label>
+		<label>Variable 3 (Number)</label>
 		<description>MySensors var3 Channel</description>
 		<category>Variable</category>
 	</channel-type>
 	<channel-type id="var4-channel">
 		<item-type>Number</item-type>
-		<label>Variable 4</label>
+		<label>Variable 4 (Number)</label>
 		<description>MySensors var4 Channel</description>
 		<category>Variable</category>
 	</channel-type>
 	<channel-type id="var5-channel">
-		<item-type>Number</item-type>
-		<label>Variable 5</label>
+		<item-type>String</item-type>
+		<label>Variable 5 (String)</label>
 		<description>MySensors var5 Channel</description>
 		<category>Variable</category>
 	</channel-type>
