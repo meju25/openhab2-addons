@@ -71,9 +71,7 @@ public class MySensorsReader implements MySensorsUpdateListener, Runnable {
             } catch (Exception e) {
                 logger.error("exception on reading from serial port, message: {}", e.getMessage());
             }
-
         }
-
     }
 
     private void broadCastDisconnect() {
