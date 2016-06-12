@@ -41,7 +41,6 @@ public class FileRegexParserHandlerFactory extends BaseThingHandlerFactory {
     private Logger logger = LoggerFactory.getLogger(FileRegexParserHandlerFactory.class);
     private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
             .singleton(THING_TYPE_FILEREGEXPARSER);
-    private ChannelBuilder myThingBuilder;
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -71,7 +70,6 @@ public class FileRegexParserHandlerFactory extends BaseThingHandlerFactory {
             ThingUID bridgeUID) {
 
         Thing myThing;
-        String fileName;
         String regEx;
         Pattern pattern;
         int groupCount = 0;
@@ -80,12 +78,6 @@ public class FileRegexParserHandlerFactory extends BaseThingHandlerFactory {
         ThingBuilder myThingBuilder = editThing(myThing);
         Configuration config = myThing.getConfiguration();
 
-        try {
-            fileName = (String) config.get("fileName");
-
-        } catch (Exception e) {
-            logger.debug("Cannot set fileName parameter.", e);
-        }
         try {
             regEx = (String) config.get("regEx");
             pattern = Pattern.compile(regEx);

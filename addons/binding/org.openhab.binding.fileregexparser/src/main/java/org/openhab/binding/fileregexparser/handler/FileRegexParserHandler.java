@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.smarthome.config.core.Configuration;
 import org.eclipse.smarthome.core.library.types.DecimalType;
+import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -28,6 +29,7 @@ import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
 import org.eclipse.smarthome.core.thing.binding.builder.ThingBuilder;
 import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.types.Command;
+import org.openhab.binding.fileregexparser.internal.FileRegexParserWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +47,14 @@ public class FileRegexParserHandler extends BaseThingHandler {
     private String regEx;
     private static Pattern pattern;
     private static Matcher matcher;
-    private int groupCount = 0;
+    private FileRegexParserWorker myWorker = new FileRegexParserWorker(this);
 
     public FileRegexParserHandler(Thing thing) {
         super(thing);
+    }
+
+    public void updateStateReceived(String channel, String state) {
+        updateState(new ChannelUID(getThing().getUID(), channel), new StringType(state));
     }
 
     @Override
@@ -71,9 +77,10 @@ public class FileRegexParserHandler extends BaseThingHandler {
             logger.debug("Cannot set regEx parameter.", e);
         }
         matcher = pattern.matcher("");
-        groupCount = matcher.groupCount();
+        matcher.groupCount();
         updateState(new ChannelUID(getThing().getUID(), CHANNEL_GROUPCOUNT), new DecimalType(matcher.groupCount()));
         updateStatus(ThingStatus.ONLINE);
+        myWorker.startWorker(fileName, regEx);
 
     }
 
@@ -95,7 +102,6 @@ public class FileRegexParserHandler extends BaseThingHandler {
      * }
      */
     protected void thingStructureChanged() {
-        String fileName;
         String regEx;
         Pattern pattern;
         int groupCount = 0;
@@ -138,7 +144,7 @@ public class FileRegexParserHandler extends BaseThingHandler {
 
     @Override
     public void dispose() {
-
+        myWorker.stopWorker();
     }
 
     @Override
