@@ -28,12 +28,14 @@
 		<item-type>Number</item-type>
 		<label>groupCount</label>
 		<description>Number of matching groups</description>
+		<state readOnly="true"></state>
 	</channel-type>
-	   <channel-type id="matchingGroup">
-        <item-type>String</item-type>
-        <label>matchingGroup</label>
-        <description>Result of MatchingGroup 1</description>
-    </channel-type>
-	
+	<channel-type id="matchingGroup">
+		<item-type>String</item-type>
+		<label>matchingGroup</label>
+		<description>Result of MatchingGroup 1</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
 
 </thing:thing-descriptions>

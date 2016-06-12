@@ -174,8 +174,6 @@ public class FileRegexParserHandler extends BaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        if (channelUID.getId().equals(CHANNEL_GROUPCOUNT)) {
-            // TODO: handle command
-        }
+
     }
 }
