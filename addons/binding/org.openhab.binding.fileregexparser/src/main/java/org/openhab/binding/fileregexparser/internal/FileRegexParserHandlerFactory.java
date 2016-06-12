@@ -7,31 +7,42 @@
  */
 package org.openhab.binding.fileregexparser.internal;
 
-import static org.openhab.binding.fileregexparser.FileRegexParserBindingConstants.*;
+import static org.openhab.binding.fileregexparser.FileRegexParserBindingConstants.THING_TYPE_FILEREGEXPARSER;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
-
-import org.openhab.binding.fileregexparser.handler.FileRegexParserHandler;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.smarthome.config.core.Configuration;
-import org.eclipse.smarthome.core.thing.Bridge;
+import org.eclipse.smarthome.core.thing.Channel;
+import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.thing.binding.builder.ChannelBuilder;
+import org.eclipse.smarthome.core.thing.binding.builder.ThingBuilder;
+import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
+import org.openhab.binding.fileregexparser.handler.FileRegexParserHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The {@link FileRegexParserHandlerFactory} is responsible for creating things and thing 
+ * The {@link FileRegexParserHandlerFactory} is responsible for creating things and thing
  * handlers.
- * 
+ *
  * @author meju25 - Initial contribution
  */
 public class FileRegexParserHandlerFactory extends BaseThingHandlerFactory {
-    
-    private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SAMPLE);
-    
+    private Logger logger = LoggerFactory.getLogger(FileRegexParserHandlerFactory.class);
+    private final static Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
+            .singleton(THING_TYPE_FILEREGEXPARSER);
+    private ChannelBuilder myThingBuilder;
+
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
         return SUPPORTED_THING_TYPES_UIDS.contains(thingTypeUID);
@@ -42,11 +53,58 @@ public class FileRegexParserHandlerFactory extends BaseThingHandlerFactory {
 
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(THING_TYPE_SAMPLE)) {
+        if (thingTypeUID.equals(THING_TYPE_FILEREGEXPARSER)) {
+
             return new FileRegexParserHandler(thing);
         }
 
         return null;
     }
-}
 
+    protected ThingBuilder editThing(Thing thing) {
+        return ThingBuilder.create(thing.getThingTypeUID(), thing.getUID()).withBridge(thing.getBridgeUID())
+                .withChannels(thing.getChannels()).withConfiguration(thing.getConfiguration());
+    }
+
+    @Override
+    public Thing createThing(ThingTypeUID thingTypeUID, Configuration configuration, ThingUID thingUID,
+            ThingUID bridgeUID) {
+
+        Thing myThing;
+        String fileName;
+        String regEx;
+        Pattern pattern;
+        int groupCount = 0;
+        ChannelTypeUID channelType = new ChannelTypeUID("fileregexparser:matchingGroup");
+        myThing = super.createThing(thingTypeUID, configuration, thingUID, bridgeUID);
+        ThingBuilder myThingBuilder = editThing(myThing);
+        Configuration config = myThing.getConfiguration();
+
+        try {
+            fileName = (String) config.get("fileName");
+
+        } catch (Exception e) {
+            logger.debug("Cannot set fileName parameter.", e);
+        }
+        try {
+            regEx = (String) config.get("regEx");
+            pattern = Pattern.compile(regEx);
+            Matcher matcher = pattern.matcher("");
+            groupCount = matcher.groupCount();
+        } catch (Exception e) {
+            logger.debug("Cannot set regEx parameter.", e);
+        }
+
+        List<Channel> channels = new ArrayList<Channel>(myThing.getChannels());
+
+        for (int i = 1; i <= groupCount; i++) {
+            Channel channel = ChannelBuilder.create(new ChannelUID(myThing.getUID(), "matchingGroup" + i), "String")
+                    .withType(channelType).build();
+            channels.add(channel);
+        }
+        myThingBuilder.withChannels(channels);
+
+        return myThingBuilder.build();
+    }
+
+}
