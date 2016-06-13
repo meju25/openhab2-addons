@@ -18,5 +18,4 @@ Import-Package: com.google.common.collect,
 Service-Component: OSGI-INF/*
 Export-Package: org.openhab.binding.fileregexparser,
  org.openhab.binding.fileregexparser.handler
-Require-Bundle: org.slf4j.log4j,
- org.eclipse.smarthome.core
+Require-Bundle: org.eclipse.smarthome.core

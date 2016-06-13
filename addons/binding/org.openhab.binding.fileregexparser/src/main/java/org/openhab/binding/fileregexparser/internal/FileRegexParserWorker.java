@@ -14,9 +14,10 @@ import org.slf4j.LoggerFactory;
 
 public class FileRegexParserWorker implements Runnable {
     private static final String THING_HANDLER_THREADPOOL_NAME = "thingHandler";
+    private static final String SAFE_CALL_THREADPOOL_NAME = "saveCall";
     private final Logger logger = LoggerFactory.getLogger(FileRegexParserWorker.class);
 
-    protected final ExecutorService executor = ThreadPoolManager.getScheduledPool(THING_HANDLER_THREADPOOL_NAME);
+    protected final ExecutorService executor = ThreadPoolManager.getPool(SAFE_CALL_THREADPOOL_NAME);
     protected Future<?> future = null;
 
     private long filePointer = 0;
@@ -31,7 +32,7 @@ public class FileRegexParserWorker implements Runnable {
     // TODO Auto-generated constructor stub
 
     public void startWorker(String fileName, String regEx) {
-        logger.debug("Starting Worker thread");
+        logger.debug("Starting Worker thread for " + fileName);
         this.fileToRead = new File(fileName);
         this.regEx = regEx;
         future = executor.submit(this);
@@ -62,13 +63,17 @@ public class FileRegexParserWorker implements Runnable {
                 updateCallback.updateStateReceived("matchingGroup" + i, m.group(i));
 
             }
+        } else {
+            logger.info(toParse + ": no match for " + p.toString());
         }
     }
 
     @Override
     public void run() {
-        try {
-            while (true) {
+        logger.debug("Runner run entered for file" + fileToRead.getName());
+        while (true) {
+            try {
+
                 Thread.sleep(1000);
                 long len = fileToRead.length();
                 if (len < filePointer) {
@@ -85,12 +90,18 @@ public class FileRegexParserWorker implements Runnable {
                 }
                 filePointer = raf.getFilePointer();
                 raf.close();
+
+            } catch (Exception e) {
+                logger.error(e.toString());
+                try {
+                    logger.debug(fileToRead.getName() + ".Worker: Sleeping for 1 min");
+                    Thread.sleep(60000);
+                } catch (Exception e1) {
+                    logger.error(e1.toString());
+                }
+
             }
-        } catch (Exception e) {
-            System.out.println(e);
-
         }
-
     }
 
 }
