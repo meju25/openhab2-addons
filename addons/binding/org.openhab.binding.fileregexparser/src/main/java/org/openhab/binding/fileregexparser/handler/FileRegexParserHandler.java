@@ -68,16 +68,17 @@ public class FileRegexParserHandler extends BaseThingHandler {
             fileName = (String) config.get("fileName");
 
         } catch (Exception e) {
-            logger.debug("Cannot set fileName parameter.", e);
+            logger.error("Cannot set fileName parameter.", e);
         }
         try {
             regEx = (String) config.get("regEx");
             pattern = Pattern.compile(regEx);
         } catch (Exception e) {
-            logger.debug("Cannot set regEx parameter.", e);
+            logger.error("Cannot set regEx parameter.", e);
         }
         matcher = pattern.matcher("");
         matcher.groupCount();
+        logger.debug(getThing().getUID() + ": updating groupCount to: " + matcher.groupCount());
         updateState(new ChannelUID(getThing().getUID(), CHANNEL_GROUPCOUNT), new DecimalType(matcher.groupCount()));
         updateStatus(ThingStatus.ONLINE);
         myWorker.startWorker(fileName, regEx);
@@ -113,7 +114,7 @@ public class FileRegexParserHandler extends BaseThingHandler {
             fileName = (String) config.get("fileName");
 
         } catch (Exception e) {
-            logger.debug("Cannot set fileName parameter.", e);
+            logger.error("Cannot set fileName parameter.", e);
         }
         try {
             regEx = (String) config.get("regEx");
@@ -121,7 +122,7 @@ public class FileRegexParserHandler extends BaseThingHandler {
             Matcher matcher = pattern.matcher("");
             groupCount = matcher.groupCount();
         } catch (Exception e) {
-            logger.debug("Cannot set regEx parameter.", e);
+            logger.error("Cannot set regEx parameter.", e);
         }
 
         List<Channel> channels = new ArrayList<Channel>();
