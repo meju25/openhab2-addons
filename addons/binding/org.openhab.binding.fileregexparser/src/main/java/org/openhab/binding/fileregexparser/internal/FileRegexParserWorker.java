@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,8 +37,11 @@ public class FileRegexParserWorker implements Runnable {
         logger.debug("Starting Worker thread for " + fileName);
         this.fileToRead = new File(fileName);
         this.regEx = regEx;
+        filePointer = fileToRead.length();
         executeWorker = true;
         future = executor.submit(this);
+        logger.debug(
+                "Worker started: futureId = " + System.identityHashCode(future) + " executor: " + executor.toString());
     }
 
     public void stopWorker() {
@@ -45,7 +49,13 @@ public class FileRegexParserWorker implements Runnable {
         logger.debug("Stopping Worker thread");
 
         if (future != null) {
-            logger.debug("Future cancle result: " + future.cancel(true));
+            try {
+                future.get(1000, TimeUnit.MILLISECONDS);
+                logger.debug("Future ended: " + System.identityHashCode(future) + ": Done: " + future.isDone()
+                        + " executor: " + " executor: " + executor.toString());
+            } catch (Exception e) {
+                logger.debug("Future exception: " + e);
+            }
         }
 
         /*
@@ -106,7 +116,7 @@ public class FileRegexParserWorker implements Runnable {
 
             }
         }
-        logger.debug(fileToRead.getName() + ".Worker: finished");
+        logger.debug(fileToRead.getName() + ".Worker: finished , futureId:" + System.identityHashCode(future));
     }
 
 }
