@@ -16,6 +16,7 @@ public class FileRegexParserWorker implements Runnable {
     private static final String THING_HANDLER_THREADPOOL_NAME = "thingHandler";
     private static final String SAFE_CALL_THREADPOOL_NAME = "saveCall";
     private final Logger logger = LoggerFactory.getLogger(FileRegexParserWorker.class);
+    private boolean executeWorker = false;
 
     protected final ExecutorService executor = ThreadPoolManager.getPool(SAFE_CALL_THREADPOOL_NAME);
     protected Future<?> future = null;
@@ -35,21 +36,24 @@ public class FileRegexParserWorker implements Runnable {
         logger.debug("Starting Worker thread for " + fileName);
         this.fileToRead = new File(fileName);
         this.regEx = regEx;
+        executeWorker = true;
         future = executor.submit(this);
     }
 
     public void stopWorker() {
-
+        executeWorker = false;
         logger.debug("Stopping Worker thread");
 
         if (future != null) {
-            future.cancel(true);
+            logger.debug("Future cancle result: " + future.cancel(true));
         }
 
-        if (executor != null) {
-            executor.shutdown();
-            executor.shutdownNow();
-        }
+        /*
+         * if (executor != null) {
+         * executor.shutdown();
+         * executor.shutdownNow();
+         * }
+         */
 
     }
 
@@ -71,7 +75,7 @@ public class FileRegexParserWorker implements Runnable {
     @Override
     public void run() {
         logger.debug("Runner run entered for file" + fileToRead.getName());
-        while (true) {
+        while (executeWorker) {
             try {
 
                 Thread.sleep(1000);
@@ -102,6 +106,7 @@ public class FileRegexParserWorker implements Runnable {
 
             }
         }
+        logger.debug(fileToRead.getName() + ".Worker: finished");
     }
 
 }

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ScheduledFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +41,6 @@ import org.slf4j.LoggerFactory;
 public class FileRegexParserHandler extends BaseThingHandler {
 
     private Logger logger = LoggerFactory.getLogger(FileRegexParserHandler.class);
-    ScheduledFuture<?> refreshJob;
     private String fileName;
     private String regEx;
     private static Pattern pattern;
