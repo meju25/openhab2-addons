@@ -34,7 +34,9 @@ For further information on how to define the regular expressions please see: htt
 This example will get the load avarage of the linux system every minute and update the related items.
 
 Crontab:
+```
 * * * * * openhab cat /proc/loadavg >> /tmp/openhab/loadavg.txt
+```
 
 Things:
 
