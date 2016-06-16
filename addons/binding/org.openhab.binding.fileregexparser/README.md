@@ -9,7 +9,7 @@ Example usage:
 
 ## Supported Things
 
-This binding supports one thing: fileregexparser
+This binding supports one thing: filetoparse
 
 ## Discovery
 
