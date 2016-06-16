@@ -6,6 +6,6 @@
 
     <name>FileRegexParser Binding</name>
     <description>Watches a file and matches a regular expression to each new line. Channels are generated automatically for each matcher group</description>
-    <author>meju25</author>
+    <author>Juergen Messmer</author>
 
 </binding:binding>
