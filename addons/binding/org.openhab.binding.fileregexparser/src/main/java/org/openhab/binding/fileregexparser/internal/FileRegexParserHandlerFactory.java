@@ -73,31 +73,55 @@ public class FileRegexParserHandlerFactory extends BaseThingHandlerFactory {
         Thing myThing;
         String regEx;
         Pattern pattern;
+        String groupConfig = "";
+        String[] groupTypes = new String[0];
         int groupCount = 0;
-        ChannelTypeUID channelType = new ChannelTypeUID("fileregexparser:matchingGroup");
+        boolean groupsConfigured = false;
+        ChannelTypeUID chStrMatchingGroup = new ChannelTypeUID("fileregexparser:matchingGroupStr");
+        ChannelTypeUID chNumMatchingGroup = new ChannelTypeUID("fileregexparser:matchingGroupNum");
         myThing = super.createThing(thingTypeUID, configuration, thingUID, bridgeUID);
         ThingBuilder myThingBuilder = editThing(myThing);
         Configuration config = myThing.getConfiguration();
-
         try {
             regEx = (String) config.get("regEx");
             pattern = Pattern.compile(regEx);
             Matcher matcher = pattern.matcher("");
             groupCount = matcher.groupCount();
+            groupConfig = (String) config.get("matchingGroupTypes");
+
         } catch (Exception e) {
             logger.debug("Cannot set regEx parameter.", e);
         }
-
+        if (groupConfig != null) {
+            groupsConfigured = true;
+            groupTypes = groupConfig.split(",");
+            if (groupCount != groupTypes.length) {
+                logger.error("Number of groups in matchingGroupTypes does not equal to the configured groups in regEx");
+                return null;
+            }
+        }
         List<Channel> channels = new ArrayList<Channel>(myThing.getChannels());
 
         for (int i = 1; i <= groupCount; i++) {
-            Channel channel = ChannelBuilder.create(new ChannelUID(myThing.getUID(), "matchingGroup" + i), "String")
-                    .withType(channelType).build();
-            channels.add(channel);
+            if (!groupsConfigured || groupTypes[i - 1].equals("str")) {
+                Channel channel = ChannelBuilder.create(new ChannelUID(myThing.getUID(), "matchingGroup" + i), "String")
+                        .withLabel("strMatchingGroup " + i).withType(chStrMatchingGroup).build();
+
+                channels.add(channel);
+            } else if (groupTypes[i - 1].equals("num")) {
+                Channel channel = ChannelBuilder.create(new ChannelUID(myThing.getUID(), "matchingGroup" + i), "Number")
+                        .withLabel("numMatchingGroup " + i).withType(chNumMatchingGroup).build();
+                channels.add(channel);
+            } else {
+                logger.error(String.format("%s is not a valid type", groupTypes[i - 1]));
+                return null;
+            }
         }
         myThingBuilder.withChannels(channels);
-
-        return myThingBuilder.build();
+        myThingBuilder.withLabel(thingUID.getId());
+        myThing.setLabel(thingUID.getId());
+        Thing myNewThing = myThingBuilder.build();
+        return myNewThing;
     }
 
 }

@@ -95,7 +95,6 @@ public class FileRegexParserWorker implements Runnable {
         logger.debug("Runner run entered for file" + fileToRead.getName());
         while (executeWorker) {
             try {
-
                 Thread.sleep(1000);
                 long len = fileToRead.length();
                 if (len < filePointer) {

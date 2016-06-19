@@ -20,6 +20,10 @@
 				<label>RegEx</label>
 				<description>Regular expression to be applied to each line of the file</description>
 			</parameter>
+	        <parameter name="matchingGroupTypes" type="text" required="false">
+                <label>Matching Group Types</label>
+                <description>Types of matching groups str or num, comma separated list. - number must match the number of the matching groups defined in the RegEx  e.g.: str,num,num,str</description>
+            </parameter>
 		</config-description>
 	</thing-type>
 
@@ -30,12 +34,18 @@
 		<description>Number of matching groups</description>
 		<state readOnly="true"></state>
 	</channel-type>
-	<channel-type id="matchingGroup">
+	<channel-type id="matchingGroupStr">
 		<item-type>String</item-type>
-		<label>matchingGroup</label>
-		<description>Result of MatchingGroup 1</description>
+		<label>matchingGroup String</label>
+		<description>Result of MatchingGroup, type String </description>
 		<state readOnly="true"></state>
 	</channel-type>
+    <channel-type id="matchingGroupNum">
+        <item-type>Number</item-type>
+        <label>matchingGroup Number</label>
+        <description>Result of MatchingGroup x, type Number</description>
+        <state readOnly="true"></state>
+    </channel-type>
 
 
 </thing:thing-descriptions>

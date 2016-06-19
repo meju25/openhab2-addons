@@ -10,6 +10,7 @@ package org.openhab.binding.fileregexparser.handler;
 
 import static org.openhab.binding.fileregexparser.FileRegexParserBindingConstants.CHANNEL_GROUPCOUNT;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,19 @@ public class FileRegexParserHandler extends BaseThingHandler {
     }
 
     public void updateStateReceived(String channel, String state) {
-        updateState(new ChannelUID(getThing().getUID(), channel), new StringType(state));
+        ChannelUID curChannel = new ChannelUID(getThing().getUID(), channel);
+        String itemType = thing.getChannel(channel).getAcceptedItemType();
+        if (itemType.equals("String")) {
+            updateState(curChannel, new StringType(state));
+        } else if (itemType.equals("Number")) {
+            updateState(curChannel, new DecimalType(state));
+        } else {
+            logger.error("unsupported itemType: " + itemType);
+        }
+    }
+
+    public void updateStateReceived(String channel, Number state) {
+        updateState(new ChannelUID(getThing().getUID(), channel), new DecimalType((BigDecimal) state));
     }
 
     @Override
@@ -104,11 +117,14 @@ public class FileRegexParserHandler extends BaseThingHandler {
     protected void thingStructureChanged() {
         String regEx;
         Pattern pattern;
+        String groupConfig = "";
+        String[] groupTypes = new String[0];
         int groupCount = 0;
-        ChannelTypeUID channelType = new ChannelTypeUID("fileregexparser:matchingGroup");
+        boolean groupsConfigured = false;
+        ChannelTypeUID chStrMatchingGroup = new ChannelTypeUID("fileregexparser:matchingGroupStr");
+        ChannelTypeUID chNumMatchingGroup = new ChannelTypeUID("fileregexparser:matchingGroupNum");
         ThingBuilder myThingBuilder = editThing();
         Configuration config = thing.getConfiguration();
-
         try {
             fileName = (String) config.get("fileName");
 
@@ -120,25 +136,39 @@ public class FileRegexParserHandler extends BaseThingHandler {
             pattern = Pattern.compile(regEx);
             Matcher matcher = pattern.matcher("");
             groupCount = matcher.groupCount();
-        } catch (Exception e) {
-            logger.error("Cannot set regEx parameter.", e);
-        }
+            groupConfig = (String) config.get("matchingGroupTypes");
 
-        List<Channel> channels = new ArrayList<Channel>();
-        List<Channel> curChannels = new ArrayList<Channel>(thing.getChannels());
-        for (int i = 0; i < curChannels.size(); i++) {
-            if (!curChannels.get(i).getChannelTypeUID().equals(channelType)) {
-                channels.add(curChannels.get(i));
+        } catch (Exception e) {
+            logger.debug("Cannot set regEx parameter.", e);
+        }
+        if (groupConfig != null) {
+            groupsConfigured = true;
+            groupTypes = groupConfig.split(",");
+            if (groupCount != groupTypes.length) {
+                logger.error("Number of groups in matchingGroupTypes does not equal to the configured groups in regEx");
+                return;
             }
         }
+        List<Channel> channels = new ArrayList<Channel>(thing.getChannels());
 
         for (int i = 1; i <= groupCount; i++) {
-            Channel channel = ChannelBuilder.create(new ChannelUID(thing.getUID(), "matchingGroup" + i), "String")
-                    .withType(channelType).build();
-            channels.add(channel);
+            if (!groupsConfigured || groupTypes[i - 1].equals("str")) {
+                Channel channel = ChannelBuilder.create(new ChannelUID(thing.getUID(), "matchingGroup" + i), "String")
+                        .withLabel("strMatchingGroup " + i).withType(chStrMatchingGroup).build();
+
+                channels.add(channel);
+            } else if (groupTypes[i - 1].equals("num")) {
+                Channel channel = ChannelBuilder.create(new ChannelUID(thing.getUID(), "matchingGroup" + i), "Number")
+                        .withLabel("numMatchingGroup " + i).withType(chNumMatchingGroup).build();
+                channels.add(channel);
+            } else {
+                logger.error(String.format("%s is not a valid type", groupTypes[i - 1]));
+                return;
+            }
         }
         myThingBuilder.withChannels(channels);
-
+        myThingBuilder.withLabel(thing.getUID().getId());
+        thing.setLabel(thing.getUID().getId());
         updateThing(myThingBuilder.build());
     }
 
