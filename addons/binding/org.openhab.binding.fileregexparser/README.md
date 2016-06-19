@@ -43,7 +43,7 @@ Crontab:
 Things:
 
 ```
-fileregexparser:filetoparse:loadAvg [fileName="/tmp/openhab/loadavg.txt", regEx="^(\\d{0,2}\\.\\d{2})\\s(\\d{0,2}\\.\\d{2})\\s(\\d{0,2}\\.\\d{2})\\s(\\d*/\\d*)\\s(\\d*)$", matchingGroupTypes="num,num,num,str,num"]
+ fileregexparser:filetoparse:loadAvg [fileName="/tmp/openhab/loadavg.txt", regEx="^(\\d{0,2}\\.\\d{2})\\s(\\d{0,2}\\.\\d{2})\\s(\\d{0,2}\\.\\d{2})\\s(\\d*/\\d*)\\s(\\d*)$", matchingGroupTypes="num,num,num,str,num"]
 
 ```
 
@@ -51,9 +51,10 @@ Items:
 
 ```
 Number sysNoMatchingGroups    "Number of matching groups [%d]" (gSys) {channel="fileregexparser:filetoparse:loadAvg:groupCount"}
-String sysLoadAvg1  "LoadAvg 1min [%d]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup1" }
-String sysLoadAvg5  "LoadAvg 5min [%d]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup2" }
-String sysLoadAvg15  "LoadAvg 15min [%d]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup3" }
+Number sysNoMatchingGroups    "Number of matching groups [%d]" (gSys) {channel="fileregexparser:filetoparse:loadAvg:groupCount"}
+Number sysLoadAvg1  "LoadAvg 1min [%s]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup1" }
+Number sysLoadAvg5  "LoadAvg 5min [%s]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup2" }
+Number sysLoadAvg15  "LoadAvg 15min [%s]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup3" }
 String sysThreads  "Threads [%s]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup4" }
-String sysLastPid  "Last PID [%d]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup5" }
+Number sysLastPid  "Last PID [%d]"  (gSys) { channel="fileregexparser:filetoparse:loadAvg:matchingGroup5" }
 ```
