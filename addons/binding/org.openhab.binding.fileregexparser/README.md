@@ -24,7 +24,7 @@ No binding configuration required.
 The things requires the file name (fileName including full path) and the regular expression to be applied to each line (regEx).
 Optional the type (str, num) for each matching group can be defined with the matchingGroupTypes parameter (comma separated list).
 It matchingGroupTypes is used, it has to define the type for all of the groups defined in the regEx.
-For further information on how to define the regular expressions please see: https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
+For further information on how to define regular expressions please see: https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
 
 ## Channels
 
