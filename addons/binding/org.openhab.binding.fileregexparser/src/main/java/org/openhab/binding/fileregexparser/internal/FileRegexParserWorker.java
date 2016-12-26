@@ -92,7 +92,7 @@ public class FileRegexParserWorker implements Runnable {
 
     @Override
     public void run() {
-        logger.debug("Runner run entered for file" + fileToRead.getName());
+        logger.debug("Runner run entered for file: " + fileToRead.getName());
         while (executeWorker) {
             try {
                 Thread.sleep(1000);

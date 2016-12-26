@@ -63,6 +63,7 @@
     <module>org.openhab.binding.vitotronic</module>
     <module>org.openhab.binding.yamahareceiver</module>
     <module>org.openhab.binding.fileregexparser</module>
+    <module>org.openhab.binding.mejutest</module>
   </modules>
 
 </project>
