@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="fileregexparser" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="filetoparse">
+		<label>File Parser</label>
+		<description>Watches a file and matches a regular expression to each new line. Channels are generated automatically for each matcher group.</description>
+
+		<channels>
+			<channel id="groupCount" typeId="groupCount" />
+		</channels>
+		<config-description>
+			<parameter name="fileName" type="text" required="true">
+				<label>Filename</label>
+				<description>Filename including full path</description>
+			</parameter>
+			<parameter name="regEx" type="text" required="true">
+				<label>RegEx</label>
+				<description>Regular expression to be applied to each line of the file</description>
+			</parameter>
+			<parameter name="capturingGroupTypes" type="text" required="false">
+				<label>Capturing Group Types</label>
+				<description>Types of capturing groups str or num, comma separated list. The number or arguments must match the number of the capturing groups defined in the RegEx  e.g.: str,num,num,str</description>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+	<channel-type id="groupCount">
+		<item-type>Number</item-type>
+		<label>groupCount</label>
+		<description>Number of capturing groups</description>
+		<state readOnly="true"></state>
+	</channel-type>
+	<channel-type id="capturingGroupStr">
+		<item-type>String</item-type>
+		<label>capturingGroup String</label>
+		<description>Result of CapturingGroup, type String </description>
+		<state readOnly="true"></state>
+	</channel-type>
+	<channel-type id="capturingGroupNum">
+		<item-type>Number</item-type>
+		<label>capturingGroup Number</label>
+		<description>Result of CapturingGroup, type Number</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+
+</thing:thing-descriptions>
